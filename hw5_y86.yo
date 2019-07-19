@@ -1,0 +1,65 @@
+                            | # Execution begins at address 0 
+0x000:                      | 		.pos 0
+0x000: 30f40002000000000000 | 		irmovq stack, %rsp  	# Set up stack pointer
+0x00a: 805000000000000000   | 		call main		# Execute main program
+0x013: 00                   | 		halt			# Terminate program 
+                            | 
+                            | # Array of 4 elements
+0x018:                      | 		.align 8
+0x018: dddd000000000000     | array:	.quad 0xdddd          # These values should get sorted
+0x020: eeee000000000000     |         .quad 0xeeee
+0x028: bbbb000000000000     |         .quad 0xbbbb
+0x030: aaaa000000000000     |         .quad 0xaaaa
+0x038: ffff000000000000     |         .quad 0xffff
+0x040: cccc000000000000     |         .quad 0xcccc
+0x048: 0101000000000000     |         .quad 0x0101          # This value should not change
+                            | 
+                            | 
+0x050: 30f71800000000000000 | main:	irmovq array,%rdi
+0x05a: 30f60600000000000000 | 		irmovq $6,%rsi
+0x064: 806e00000000000000   | 		call Bubble		# Bubble(array, )
+0x06d: 90                   | 		ret
+                            | 
+                            | # void Bubble(long *data, long count)
+0x06e:                      | Bubble:
+0x06e: 30f90100000000000000 | 		irmovq 	$1, %r9
+0x078: 30fa0800000000000000 | 		irmovq	$8, %r10
+0x082: 2068                 | 		rrmovq	%rsi, %r8
+0x084: 6198                 | 		subq	%r9, %r8
+0x086: 6288                 | 		andq	%r8, %r8
+0x088: 710b01000000000000   | 		jle L8
+0x091: 6066                 | 		addq	%rsi, %rsi
+0x093: 6066                 | 		addq	%rsi, %rsi
+0x095: 6066                 | 		addq	%rsi, %rsi
+0x097: 6076                 | 		addq	%rdi, %rsi
+0x099: 70f300000000000000   | 		jmp L10
+0x0a2:                      | L12:
+0x0a2: 50200000000000000000 | 		mrmovq (%rax), %rdx
+0x0ac: 5010f8ffffffffffffff | 		mrmovq	-8(%rax), %rcx
+0x0b6: 202b                 | 		rrmovq	%rdx, %r11
+0x0b8: 611b                 | 		subq	%rcx, %r11
+0x0ba: 75d700000000000000   | 		jge	L11
+0x0c3: 40100000000000000000 | 		rmmovq	%rcx, (%rax)
+0x0cd: 4020f8ffffffffffffff | 		rmmovq 	%rdx, -8(%rax)
+0x0d7:                      | L11:
+0x0d7: 60a0                 | 		addq	%r10, %rax
+0x0d9: 200b                 | 		rrmovq	%rax, %r11
+0x0db: 616b                 | 		subq	%rsi, %r11
+0x0dd: 74a200000000000000   | 		jne L12
+0x0e6:                      | L13:
+0x0e6: 61a6                 | 		subq	%r10, %rsi
+0x0e8: 6198                 | 		subq	%r9, %r8
+0x0ea: 730b01000000000000   | 		je L8
+0x0f3:                      | L10:
+0x0f3: 6288                 | 		andq	%r8, %r8
+0x0f5: 71e600000000000000   | 		jle L13
+0x0fe: 2070                 | 		rrmovq 	%rdi, %rax
+0x100: 60a0                 | 		addq	%r10, %rax
+0x102: 70a200000000000000   | 		jmp L12
+0x10b:                      | L8:
+0x10b: 90                   | 		ret
+                            | 
+                            | 
+                            | # Stack starts here and grows to lower addresses
+0x200:                      | 	.pos 0x200
+0x200:                      | stack:
